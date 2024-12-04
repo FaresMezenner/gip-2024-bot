@@ -30,6 +30,8 @@ function loadCommands(client, token, clientId, guildId) {
         client.commands.set(command.data.name, command);
         commands.push(command.data.toJSON());
         table.addRow(file, " Loaded ✔️");
+
+        
       } else {
         table.addRow(
           file,

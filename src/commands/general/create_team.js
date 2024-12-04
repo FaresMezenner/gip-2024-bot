@@ -117,11 +117,11 @@ module.exports = {
       r.name.startsWith("Admin")
     );
     const organizersRole = interaction.member.roles.cache.find((r) =>
-      r.name === "Organizer"
+      r.id === ORGANIZER_ROLE_ID
     );
     
     // Check if either role is found
-    if (!adminRole ) {
+    if (!organizersRole ) {
     
       await interaction.reply({ embeds: [{ title: "Only Orgenizers can create teams" }] });
       return;
