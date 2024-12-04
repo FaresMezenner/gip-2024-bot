@@ -169,6 +169,7 @@ module.exports = {
 
       // Check if the team name already exists
       const name = interaction.options.getString("name");
+      
 
       const role = interaction.guild.roles.cache.find(
         (r) => r.name === `Team ${name}`
@@ -183,6 +184,33 @@ module.exports = {
         return;
       }
 
+
+      // Getting the mentor
+      const mentor = interaction.options.getMember("mentor");
+
+      // Check if the mentor has the mentor role
+      let mentorRole = mentor.roles.cache.find((r) => r.id === MENTOR_ROLE_ID);
+
+      if (!mentorRole) {
+        await interaction.editReply({
+          embeds: [{ title: "The selected mentor is not a mentor" }],
+        });
+        return;
+      }
+
+      // check if the mentor is not in a team
+      mentorRole = mentor.roles.cache.find((r) => r.name.startsWith("Team"));
+
+
+      if (mentorRole) {
+        await interaction.editReply({
+          embeds: [{ title: "The mentor is already in a team" }],
+        });
+        return;
+      }
+
+      
+
       // Create the team role and add to the team members
       const createdRole = await interaction.guild.roles.create({
         name: `Team ${name}`,
@@ -193,11 +221,8 @@ module.exports = {
 
 
 
-      // Getting the mentor
-      const mentor = interaction.options.getMember("mentor");
       // setting the mentor roles
       mentor.roles.add(createdRole);
-      mentor.roles.add(MENTOR_ROLE_ID);
 
       
 
@@ -269,34 +294,6 @@ module.exports = {
             allow: [
               PermissionFlagsBits.ViewChannel,
               PermissionFlagsBits.SendMessages,
-            ],
-          },
-        ],
-      });
-
-
-
-      await interaction.guild.channels.create({
-        name: `ask-questions`,
-        type: ChannelType.GuildVoice,
-        parent: category.id,
-        permissionOverwrites: [
-          {
-            id: interaction.guild.id,
-            deny: [PermissionFlagsBits.ViewChannel],
-          },
-          {
-            id: createdRole.id,
-            allow: [
-              PermissionFlagsBits.ViewChannel,
-              PermissionFlagsBits.Connect,
-            ],
-          },
-          {
-            id: ORGANIZER_ROLE_ID,
-            allow: [
-              PermissionFlagsBits.ViewChannel,
-              PermissionFlagsBits.Connect,
             ],
           },
         ],
@@ -377,7 +374,7 @@ module.exports = {
 
       await interaction.guild.channels.create({
         name: "mentor-voice",
-        type: ChannelType.GuildText,
+        type: ChannelType.GuildVoice,
         parent: category.id,
         permissionOverwrites: [
           {
