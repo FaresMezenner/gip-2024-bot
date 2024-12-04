@@ -21,6 +21,12 @@ module.exports = {
     )
     .addUserOption((option) =>
       option
+        .setName("mentor")
+        .setDescription("The mentor of the team")
+        .setRequired(true)
+    )
+    .addUserOption((option) =>
+      option
         .setName("member1")
         .setDescription("First member of the team")
         .setRequired(false)
@@ -42,14 +48,71 @@ module.exports = {
         .setName("member4")
         .setDescription("Fourth member of the team")
         .setRequired(false)
-    ),
-  // .addUserOption((option) =>
-  //   option
-  //     .setName("member4")
-  //     .setDescription("Fourth member of the team")
-  //     .setRequired(false)
-  // ),
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member5")
+      .setDescription("Fifth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member6")
+      .setDescription("Sixth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member7")
+      .setDescription("Seventh member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member8")
+      .setDescription("Eighth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member9")
+      .setDescription("Ninth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member10")
+      .setDescription("Tenth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member11")
+      .setDescription("Eleventh member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member12")
+      .setDescription("Twelfth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member13")
+      .setDescription("Thirteenth member of the team")
+      .setRequired(false)
+    )
+    .addUserOption((option) =>
+      option
+      .setName("member14")
+      .setDescription("Fourteenth member of the team")
+      .setRequired(false)
+    )
+    ,
   async execute(client, interaction, args) {
+
+
     const adminRole = interaction.member.roles.cache.find((r) =>
       r.name.startsWith("Admin")
     );
@@ -58,7 +121,7 @@ module.exports = {
     );
     
     // Check if either role is found
-    if (!adminRole && !organizersRole) {
+    if (!adminRole ) {
     
       await interaction.reply({ embeds: [{ title: "Only Orgenizers can create teams" }] });
       return;
@@ -72,10 +135,22 @@ module.exports = {
       const member2 = interaction.options.getMember("member2");
       const member3 = interaction.options.getMember("member3");
       const member4 = interaction.options.getMember("member4");
-      // const member4 = interaction.options.getMember("member4");
+      const member5 = interaction.options.getMember("member5");
+      const member6 = interaction.options.getMember("member6");
+      const member7 = interaction.options.getMember("member7");
+      const member8 = interaction.options.getMember("member8");
+      const member9 = interaction.options.getMember("member9");
+      const member10 = interaction.options.getMember("member10");
+      const member11 = interaction.options.getMember("member11");
+      const member12 = interaction.options.getMember("member12");
+      const member13 = interaction.options.getMember("member13");
+      const member14 = interaction.options.getMember("member14");
+
 
       // Filtering the members in case of a team with a size less than 5
-      const members = [member1, member2, member3, member4].filter(
+      const members = [
+        member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12, member13, member14
+      ].filter(
         (member) => member !== null
       );
 
@@ -90,6 +165,7 @@ module.exports = {
           return;
         }
       }
+
 
       // Check if the team name already exists
       const name = interaction.options.getString("name");
@@ -114,6 +190,16 @@ module.exports = {
       });
 
       members.forEach((member) => member.roles.add(createdRole));
+
+
+
+      // Getting the mentor
+      const mentor = interaction.options.getMember("mentor");
+      // setting the mentor roles
+      mentor.roles.add(createdRole);
+      mentor.roles.add(MENTOR_ROLE_ID);
+
+      
 
       // Create the team category, voice channel and text channel
       const category = await interaction.guild.channels.create({
@@ -150,8 +236,48 @@ module.exports = {
         ],
       });
 
+      const textChannel = await interaction.guild.channels.create({
+        name: `text-channel`,
+        type: ChannelType.GuildText,
+        parent: category.id,
+        permissionOverwrites: [
+          {
+            id: interaction.guild.id,
+            deny: [PermissionFlagsBits.ViewChannel],
+          },
+          {
+            id: createdRole.id,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.SendMessages,
+            ],
+          },
+        ],
+      });
+
       await interaction.guild.channels.create({
-        name: `ask-help`,
+        name: `resources-channel`,
+        type: ChannelType.GuildText,
+        parent: category.id,
+        permissionOverwrites: [
+          {
+            id: interaction.guild.id,
+            deny: [PermissionFlagsBits.ViewChannel],
+          },
+          {
+            id: createdRole.id,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.SendMessages,
+            ],
+          },
+        ],
+      });
+
+
+
+      await interaction.guild.channels.create({
+        name: `ask-questions`,
         type: ChannelType.GuildVoice,
         parent: category.id,
         permissionOverwrites: [
@@ -173,18 +299,11 @@ module.exports = {
               PermissionFlagsBits.Connect,
             ],
           },
-          {
-            id: MENTOR_ROLE_ID,
-            allow: [
-              PermissionFlagsBits.ViewChannel,
-              PermissionFlagsBits.Connect,
-            ],
-          },
         ],
       });
 
-      const textChannel = await interaction.guild.channels.create({
-        name: `text-channel`,
+      await interaction.guild.channels.create({
+        name: `ask-questions`,
         type: ChannelType.GuildText,
         parent: category.id,
         permissionOverwrites: [
@@ -202,8 +321,35 @@ module.exports = {
         ],
       });
 
+
       await interaction.guild.channels.create({
-        name: `ask-help`,
+        name: `team-announcements`,
+        type: ChannelType.GuildText,
+        parent: category.id,
+        permissionOverwrites: [
+          {
+            id: interaction.guild.id,
+            deny: [PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.SendMessages,
+            ],
+          },
+          {
+            id: createdRole.id,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+            ],
+          },
+          {
+            id: mentor.id,
+            allow: [
+              PermissionFlagsBits.SendMessages,
+            ],
+          }
+        ],
+      })
+
+      await interaction.guild.channels.create({
+        name: "mentor-text",
         type: ChannelType.GuildText,
         parent: category.id,
         permissionOverwrites: [
@@ -212,7 +358,7 @@ module.exports = {
             deny: [PermissionFlagsBits.ViewChannel],
           },
           {
-            id: createdRole.id,
+            id: mentor.id,
             allow: [
               PermissionFlagsBits.ViewChannel,
               PermissionFlagsBits.SendMessages,
@@ -224,16 +370,36 @@ module.exports = {
               PermissionFlagsBits.ViewChannel,
               PermissionFlagsBits.SendMessages,
             ],
+          }
+        ],
+      })
+
+
+      await interaction.guild.channels.create({
+        name: "mentor-voice",
+        type: ChannelType.GuildText,
+        parent: category.id,
+        permissionOverwrites: [
+          {
+            id: interaction.guild.id,
+            deny: [PermissionFlagsBits.ViewChannel],
           },
           {
-            id: MENTOR_ROLE_ID,
+            id: mentor.id,
             allow: [
               PermissionFlagsBits.ViewChannel,
               PermissionFlagsBits.SendMessages,
             ],
           },
+          {
+            id: ORGANIZER_ROLE_ID,
+            allow: [
+              PermissionFlagsBits.ViewChannel,
+              PermissionFlagsBits.SendMessages,
+            ],
+          }
         ],
-      });
+      })
 
       await textChannel.send(
         `Welcome ${createdRole.toString()}, this is your team space`
