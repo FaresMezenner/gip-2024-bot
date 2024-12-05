@@ -193,33 +193,7 @@ const {
               ],
             },
             {
-                id: DIP_MENTOR_ID,
-              allow: [
-                PermissionFlagsBits.ViewChannel,
-                PermissionFlagsBits.SendMessages,
-              ],
-            }
-          ],
-        });
-  
-        await interaction.guild.channels.create({
-          name: `resources-channel`,
-          type: ChannelType.GuildText,
-          parent: category.id,
-          permissionOverwrites: [
-            {
-              id: interaction.guild.id,
-              deny: [PermissionFlagsBits.ViewChannel],
-            },
-            {
-              id: createdRole.id,
-              allow: [
-                PermissionFlagsBits.ViewChannel,
-                PermissionFlagsBits.SendMessages,
-              ],
-            },
-            {
-                id: DIP_MENTOR_ID,
+              id: DIP_MENTOR_ID,
               allow: [
                 PermissionFlagsBits.ViewChannel,
                 PermissionFlagsBits.SendMessages,
